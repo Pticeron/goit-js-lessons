@@ -16,17 +16,20 @@ const colors = [
 
 //   Colors з першого рядка не дорівнює Colors з 19 рядка; це називається перекриття
 
-
-console.log(createColorCardsMarkup (colors));
+const palettContainer = document.querySelector(`.js-palette`);
+const cardsMarkup = createColorCardsMarkup(colors);
+// 
+palettContainer.insertAdjacentHTML(`beforeend`, cardsMarkup);
+palettContainer.addEventListener(`click`, onPalettContainerClick);
 
   function createColorCardsMarkup (colors) {
-    const markup = colors.map(color => {
+    return colors.map(({hex, rgb}) => {
     return `
-    <div class="color-card">
+    <div class = "color-card">
     <div
         class="color-swatch"
-        data-hex="${hex}"
-        data-rgb="${rgb}"
+        data-hex = "${hex}"
+        data-rgb = "${rgb}"
         style="background-color: ${hex}"
       ></div>
           <div class="color-meta">
@@ -36,7 +39,29 @@ console.log(createColorCardsMarkup (colors));
         </div>
         `;
     })
-    console.log(markup);
+    .join(``);
+  }
+
+  function onPalettContainerClick(evt){
+    const isColorSwatch = evt.target.classList.contains(`color-swatch`);
+    if(!isColorSwatch) {
+      return;
+    }
+    
+    const currentColorCard = document.querySelector(`.color-card.is-active`);
+
+    if(currentColorCard) {
+      currentColorCard.classList.remove(`is-active`);
+    }
+
+    const swatchEl = evt.target;
+    const parentColorCard = swatchEl.closest(`.color-card`);
+    // console.log(parentColorCard);
+
+    parentColorCard.classList.add(`is-active`);
+    // console.log(evt.target.dataset.hex);
+
+    document.body.style.backgroundColor = swatchEl.dataset.hex;
   }
 
 
